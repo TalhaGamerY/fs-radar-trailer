@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Police Radar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app" class="hidden">
+        <div class="panel">
+            <div class="header">
+                <div class="title-block">
+                    <h1>POLICE RADAR</h1>
+                    <p class="subtitle">Shows live speed of oncoming traffic</p>
+                </div>
+                <div class="header-right">
+                    <span class="badge" id="signBadge">SIGN #—</span>
+                    <button class="icon-btn close-btn" id="closeBtn" title="Close">×</button>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="settings">SETTINGS</button>
+                <button class="tab" data-tab="violations">VIOLATIONS</button>
+            </div>
+
+            <div id="settingsTab" class="tab-content">
+                <div class="columns">
+                    <div class="col left">
+                        <div class="section">
+                            <div class="section-label">BOARD</div>
+                            <div class="speed-board">
+                                <div class="board-label" id="boardLabel">YOUR SPEED</div>
+                                <div class="board-speed" id="boardSpeed">—</div>
+                                <div class="board-unit" id="boardUnit">MPH</div>
+                                <div class="board-leds">
+                                    <span class="led red"></span>
+                                    <span class="led-bar"></span>
+                                    <span class="led blue"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-label">IDENTITY</div>
+                            <label class="field-label">Sign name</label>
+                            <input type="text" id="signName" maxlength="48" placeholder="Route 68 North">
+                            <p class="hint">Shown on the map blip and logged violations</p>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-label">SIGN MODE</div>
+                            <div class="btn-group" id="signMode">
+                                <button data-value="radar" class="seg active">Radar</button>
+                                <button data-value="text" class="seg">Text</button>
+                                <button data-value="off" class="seg">Off</button>
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-label">MESSAGES</div>
+                            <label class="field-label">Normal text</label>
+                            <input type="text" id="displayText" maxlength="32" placeholder="YOUR SPEED">
+                            <label class="field-label" style="margin-top:8px">Overspeed text</label>
+                            <input type="text" id="overspeedText" maxlength="32" placeholder="SLOW DOWN">
+                            <label class="field-label" style="margin-top:8px">Board text (optional)</label>
+                            <input type="text" id="boardText" maxlength="24" placeholder="TEST TEST">
+                            <p class="hint">Max 24 characters for board text</p>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-label">RADAR POWER</div>
+                            <div class="toggle-row">
+                                <label class="switch">
+                                    <input type="checkbox" id="radarEnabled" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <span>Radar enabled</span>
+                            </div>
+                            <p class="hint">When off: no detection, no lights, no speed updates</p>
+                        </div>
+                    </div>
+
+                    <div class="col right">
+                        <div class="section">
+                            <div class="section-label">DETECTION</div>
+                            <label class="field-label">Targets</label>
+                            <div class="btn-group" id="detectTarget">
+                                <button data-value="players" class="seg active">Players</button>
+                                <button data-value="npcs" class="seg">NPCs</button>
+                                <button data-value="both" class="seg">Both</button>
+                            </div>
+
+                            <div class="row">
+                                <div class="field">
+                                    <label class="field-label">Speed limit</label>
+                                    <input type="number" id="speedLimit" min="1" max="200" value="40">
+                                </div>
+                                <div class="field">
+                                    <label class="field-label">Unit</label>
+                                    <div class="btn-group compact" id="unit">
+                                        <button data-value="MPH" class="seg active">MPH</button>
+                                        <button data-value="KM/H" class="seg">KM/H</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <label class="field-label">Range <span id="rangeVal">60 m</span></label>
+                            <input type="range" id="range" min="5" max="200" value="60" step="5">
+
+                            <label class="field-label">Cone width <span id="angleVal">50°</span></label>
+                            <input type="range" id="angle" min="5" max="160" value="50" step="5">
+
+                            <label class="field-label">Lane aim <span id="dirVal">Centre</span></label>
+                            <input type="range" id="direction" min="-90" max="90" value="0" step="5">
+                            <p class="hint">Negative aims left, positive aims right relative to trailer</p>
+
+                            <div class="toggle-row" style="margin-top:10px">
+                                <label class="switch">
+                                    <input type="checkbox" id="requireApproach" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <span>Only approaching vehicles</span>
+                            </div>
+                            <p class="hint">Ignore vehicles driving away from the radar</p>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-label">MAP BLIP</div>
+                            <div class="btn-group" id="mapBlip">
+                                <button data-value="everyone" class="seg">Everyone</button>
+                                <button data-value="police" class="seg active">Police</button>
+                                <button data-value="hidden" class="seg">Hidden</button>
+                            </div>
+                            <p class="hint">Who sees this radar on the map</p>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-label">LIGHTS</div>
+                            <label class="field-label">Emergency lights</label>
+                            <div class="btn-group" id="emergencyLights">
+                                <button data-value="off" class="seg">Off</button>
+                                <button data-value="on_violation" class="seg active">On violation</button>
+                                <button data-value="always" class="seg">Always</button>
+                            </div>
+                            <p class="hint">Alternating red / blue. "On violation" only while a vehicle exceeds the limit and stays in the cone.</p>
+
+                            <div class="toggle-row">
+                                <label class="switch">
+                                    <input type="checkbox" id="cameraFlash" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <span>Camera flash (log)</span>
+                            </div>
+                            <p class="hint">Records a violation entry once when a speeder is first detected</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="violationsTab" class="tab-content hidden">
+                <div class="violations-header">
+                    <span>TIME</span>
+                    <span>PLATE</span>
+                    <span>MODEL</span>
+                    <span>SPEED</span>
+                    <span>DRIVER</span>
+                </div>
+                <div id="violationsList" class="violations-list"></div>
+            </div>
+
+            <div class="footer">
+                <button class="btn danger" id="deleteBtn">DELETE SIGN</button>
+                <button class="btn primary" id="saveBtn">SAVE</button>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
